@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/gameOfLife.h
+stdlib.h
+-
+stdio.h
+-
+
+/home/linkouille/Bureau/Dev/C++/ConwayGOL/src/gameOfLife.c
+gameOfLife.h
+/home/linkouille/Bureau/Dev/C++/ConwayGOL/src/gameOfLife.h
+
+/home/linkouille/Bureau/Dev/C++/ConwayGOL/src/main.c
+stdlib.h
+-
+stdio.h
+-
+gameOfLife.h
+/home/linkouille/Bureau/Dev/C++/ConwayGOL/src/gameOfLife.h
+
