@@ -3,8 +3,10 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-#define TIMESTAMP 2
+#define TIMESTAMP 1
 #define MAX_NODE 16
+
+#define PROBA 0.5
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -17,6 +19,8 @@
 
 bool gB[MAX_NODE][MAX_NODE];
 bool gBtmp[MAX_NODE][MAX_NODE];
+
+bool screenVoisin = false;
 
 int nbrVoisin(int x, int y){
     int out = 0;
@@ -44,8 +48,6 @@ int nbrVoisin(int x, int y){
 
 int main(int argc, char const *argv[])
 {
-
-
     for (size_t x = 0; x < MAX_NODE; x++)
     {
         for (size_t y = 0; y < MAX_NODE; y++)
@@ -55,9 +57,23 @@ int main(int argc, char const *argv[])
         
     }
 
-    gB[8][8] = true;
-    gB[8][7] = true;
-    gB[8][6] = true;
+    //Init
+    // gB[8][8] = true;
+    // gB[8][7] = true;
+    // gB[8][6] = true;
+
+    // gB[9][8] = true;
+    // gB[9][7] = true;
+    // gB[9][9] = true;
+
+    for (size_t x = 0; x < MAX_NODE; x++)
+    {
+        for (size_t y = 0; y < MAX_NODE; y++)
+        {
+            gB[y][x] = (((float)rand()) / RAND_MAX) < PROBA;
+        }
+        
+    }
 
     for (size_t x = 0; x < MAX_NODE; x++)
     {
@@ -77,18 +93,27 @@ int main(int argc, char const *argv[])
     while (gameLoop)
     {
 
-        // system("clear");
+        system("clear");
         printf("--------------------------- Turn %d ---------------------------\n", itt);
         for (size_t x = 0; x < MAX_NODE; x++)
         {
             for (size_t y = 0; y < MAX_NODE; y++)
             {
                 if(gB[x][y]){
-                    printf(KRED " %d " KWHT,nbrVoisin(x,y));
-                    // printf("#");
+                    if(screenVoisin){
+                        printf(KRED " %d " KWHT,nbrVoisin(x,y));
+
+                    }else{
+                        printf("#");
+                    }
                 }else{
-                    printf(" %d ",nbrVoisin(x,y));
-                    // printf(".");
+                    if(screenVoisin){
+                        printf(" %d ",nbrVoisin(x,y));
+                    }else{
+                        printf(".");
+
+                    }
+
                 }
             }
             printf("\n");
@@ -105,13 +130,11 @@ int main(int argc, char const *argv[])
                 if(gB[x][y] == true){
                     if(nbV < 2 || nbV > 3){
                         gBtmp[x][y] = false;
-                        printf("Dead %ld %ld\n",x,y);
                     }
 
                 }else{
                     if(nbV == 3){
                         gBtmp[x][y] = true;
-                        printf("Born %ld %ld\n",x,y);
                     }
                 }
             }
