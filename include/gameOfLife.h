@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX_NODE 1024
+#define MAX_NODE 64
 
 typedef struct {
     int x;

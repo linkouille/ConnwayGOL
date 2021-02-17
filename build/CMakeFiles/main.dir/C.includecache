@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/linkouille/Bureau/Dev/C++/ConwayGOL/src/main.c
+stdlib.h
+-
+stdio.h
+-
+stdbool.h
+-
+unistd.h
+-
+
