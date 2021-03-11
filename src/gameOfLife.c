@@ -1,84 +1,117 @@
 #include "gameOfLife.h"
+#include "variables.h"
 
-Nodes * createNodes(){
-    Nodes * out = (Nodes *)malloc(sizeof(Nodes));
-    out->size = MAX_NODE;
-    out->indice = 0;
-    out->array = (node *)malloc(sizeof(node) * MAX_NODE);
+int nbrVoisin(gameBoard * gB,int x, int y){
+    int out = 0;
+
+    if( x-1 >= 0 && y+1 < gB->h && gB->board[x-1][y+1] ){
+        out++;
+    }if( y+1 < gB->h && gB->board[x][y+1] ){
+        out++;
+    }if( x+1 < gB->w &&  y+1 < gB->h && gB->board[x+1][y+1] ){
+        out++;
+    }if( x-1 >= 0 && gB->board[x-1][y] ){
+        out++;
+    }if( x+1 < gB->w && gB->board[x+1][y] ){
+        out++;
+    }if( x-1 >= 0 && y-1 >= 0 && gB->board[x-1][y-1] ){
+        out++;
+    }if( y-1 >= 0 && gB->board[x][y-1] ){
+        out++;
+    }if( x+1 < gB->w && y-1 >= 0 && gB->board[x+1][y-1] ){
+        out++;
+    }
 
     return out;
 }
 
-void freeNodes(Nodes * nodes){
-
-    if(nodes->array != NULL){
-        free(nodes->array);
-    }
-    free(nodes);
-}
-
-void addNode(node node, Nodes * gB) 
+gameBoard * initGoLEmpty(int w, int h) 
 {
-    if(gB == NULL || gB->array == NULL){
-        fprintf(stderr, "ERROR: NULL nodes pointer when adding");
-        exit(-1);
-    }
+    gameBoard * gB = malloc(sizeof(gameBoard));
 
-    if(gB->indice + 1 == gB->size){
-        gB->size = gB->size * 2;
-
-        gB->array = realloc( gB->array, sizeof(node)*gB->size );
-    }
-
-    gB->array[gB->indice] = node;
-    gB->indice++;
-}
-
-void addNodei(int x, int y, Nodes * gB) 
-{
-    node n;
-    n.x = x;
-    n.y = y;
-    addNode(n,gB);
-}
-
-void deleteNode(int x, int y, Nodes * gB) 
-{
-    if(gB == NULL || gB->array == NULL){
-        fprintf(stderr, "ERROR: NULL nodes pointer when deleting");
-        exit(-1);
-    }
-
-    for (size_t i = gB->indice - 1; i >= 0; i--)
+    gB->board = malloc(sizeof(bool*) * h);
+    for (size_t i = 0; i < h; i++)
     {
-        if(gB->array[i].x == x && gB->array[i].y == y){
-            for (size_t j = i; j < gB->indice; j++)
-            {
-                gB->array[j] = gB->array[j+1];
+        gB->board[i] = malloc(sizeof(bool) * w);
+    }
+    gB->w = w;
+    gB->h = h;
+
+    for (size_t x = 0; x < w; x++)
+    {
+        for (size_t y = 0; y < h; y++)
+        {
+            gB->board[y][x] = false;
+        }
+        
+    }
+
+
+    return gB;
+}
+
+gameBoard * initGoLRand(int w, int h, float p) 
+{
+    gameBoard * gB = malloc(sizeof(gameBoard));
+
+    gB->board = malloc(sizeof(bool*) * h);
+    for (size_t i = 0; i < h; i++)
+    {
+        gB->board[i] = malloc(sizeof(bool) * w);
+    }
+    gB->w = w;
+    gB->h = h;
+    for (size_t x = 0; x < w; x++)
+    {
+        for (size_t y = 0; y < h; y++)
+        {
+            gB->board[y][x] = (((float)rand()) / RAND_MAX) < p;
+        }
+        
+    }
+
+    return gB;
+}
+
+void computeRule(gameBoard * gB) 
+{
+    int voisins[gB->h][gB->w];
+
+    for (size_t x = 0; x < gB->w; x++)
+    {
+        for (size_t y = 0; y < gB->h; y++)
+        {
+            voisins[y][x] = nbrVoisin(gB,x,y);
+        }
+    }
+
+    for (size_t x = 0; x < gB->w; x++)
+    {
+        for (size_t y = 0; y < gB->h; y++)
+        {
+            int nbv = voisins[y][x];
+            if(gB->board[x][y] == true){
+                if(nbv < 2 || nbv > 3){
+                    gB->board[x][y] = false;
+                }
+            }else{
+                if(nbv == 3){
+                    gB->board[x][y] = true;
+                }
             }
-            gB->indice--;
-            return;
-
         }
-    
     }
-    
+
 }
 
-node * getNode(int x, int y, Nodes * gB) 
+void freeGameboard(gameBoard * gB) 
 {
-    if(gB == NULL || gB->array == NULL){
-        fprintf(stderr, "ERROR: NULL nodes pointer when getting");
-        exit(-1);
-    }
-
-    for (size_t i = gB->indice - 1; i >= 0; i--)
+    for (size_t i = 0; i < gB->h; i++)
     {
-        if(gB->array[i].x == x && gB->array[i].y == y){
-            return &(gB->array[i]);
-        }
-    
+        free(gB->board[i]);
     }
+    free(gB->board);
 
+    free(gB);
 }
 

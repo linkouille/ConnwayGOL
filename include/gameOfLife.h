@@ -4,31 +4,24 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#define MAX_NODE 64
-
-typedef struct {
-    int x;
-    int y;
-} node;
+#include <stdbool.h>
+#include <unistd.h>
 
 typedef struct {
-    int size;
-    int indice;
-    node * array;
+    bool ** board;
+    int w;
+    int h;
+} gameBoard;
 
-} Nodes;
 
-Nodes * createNodes();
+int nbrVoisin(gameBoard * gB,int x, int y);
 
-void freeNodes(Nodes * nodes);
+gameBoard * initGoLEmpty(int w, int h);
 
-void addNode(node node, Nodes * gB);
+gameBoard * initGoLRand(int w, int h, float p);
 
-void addNodei(int x, int y, Nodes * gB);
+void computeRule(gameBoard * gB);
 
-void deleteNode(int x, int y, Nodes * gB);
-
-node * getNode(int x, int y, Nodes * gB);
+void freeGameboard(gameBoard * gB);
 
 #endif // __GAMEOFLIFE_H__

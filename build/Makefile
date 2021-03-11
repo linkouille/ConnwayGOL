@@ -123,6 +123,33 @@ main/fast:
 	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/SDL_Handler.o: src/SDL_Handler.c.o
+
+.PHONY : src/SDL_Handler.o
+
+# target to build an object file
+src/SDL_Handler.c.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/SDL_Handler.c.o
+.PHONY : src/SDL_Handler.c.o
+
+src/SDL_Handler.i: src/SDL_Handler.c.i
+
+.PHONY : src/SDL_Handler.i
+
+# target to preprocess a source file
+src/SDL_Handler.c.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/SDL_Handler.c.i
+.PHONY : src/SDL_Handler.c.i
+
+src/SDL_Handler.s: src/SDL_Handler.c.s
+
+.PHONY : src/SDL_Handler.s
+
+# target to generate assembly for a file
+src/SDL_Handler.c.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/SDL_Handler.c.s
+.PHONY : src/SDL_Handler.c.s
+
 src/gameOfLife.o: src/gameOfLife.c.o
 
 .PHONY : src/gameOfLife.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... main"
+	@echo "... src/SDL_Handler.o"
+	@echo "... src/SDL_Handler.i"
+	@echo "... src/SDL_Handler.s"
 	@echo "... src/gameOfLife.o"
 	@echo "... src/gameOfLife.i"
 	@echo "... src/gameOfLife.s"

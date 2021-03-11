@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/main.dir/src/SDL_Handler.c.o"
   "CMakeFiles/main.dir/src/gameOfLife.c.o"
   "CMakeFiles/main.dir/src/main.c.o"
   "main"

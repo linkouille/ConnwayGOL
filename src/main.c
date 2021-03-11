@@ -2,159 +2,154 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <time.h>
+#include <math.h>
 
-#define TIMESTAMP 1
-#define MAX_NODE 16
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
-#define PROBA 0.5
-
-#define KNRM  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
-
-bool gB[MAX_NODE][MAX_NODE];
-bool gBtmp[MAX_NODE][MAX_NODE];
-
-bool screenVoisin = false;
-
-int nbrVoisin(int x, int y){
-    int out = 0;
-
-    if(gB[x-1][y+1]){
-        out++;
-    }if(gB[x][y+1]){
-        out++;
-    }if(gB[x+1][y+1]){
-        out++;
-    }if(gB[x-1][y]){
-        out++;
-    }if(gB[x+1][y]){
-        out++;
-    }if(gB[x-1][y-1]){
-        out++;
-    }if(gB[x][y-1]){
-        out++;
-    }if(gB[x+1][y-1]){
-        out++;
-    }
-
-    return out;
-}
+#include "variables.h"
+#include "gameOfLife.h"
+#include "SDL_Handler.h"
 
 int main(int argc, char const *argv[])
 {
-    for (size_t x = 0; x < MAX_NODE; x++)
-    {
-        for (size_t y = 0; y < MAX_NODE; y++)
-        {
-            gB[y][x] = false;
-        }
-        
-    }
+    
+    gameBoard * gB = initGoLEmpty(MAX_NODE, MAX_NODE);
 
-    //Init
-    // gB[8][8] = true;
-    // gB[8][7] = true;
-    // gB[8][6] = true;
-
-    // gB[9][8] = true;
-    // gB[9][7] = true;
-    // gB[9][9] = true;
-
-    for (size_t x = 0; x < MAX_NODE; x++)
-    {
-        for (size_t y = 0; y < MAX_NODE; y++)
-        {
-            gB[y][x] = (((float)rand()) / RAND_MAX) < PROBA;
-        }
-        
-    }
-
-    for (size_t x = 0; x < MAX_NODE; x++)
-    {
-        for (size_t y = 0; y < MAX_NODE; y++)
-        {
-            gBtmp[y][x] = gB[y][x];
-        }
-        
-    }
+    SDL_Window * win = initSDL();
+    SDL_Renderer * renderer = SDL_CreateRenderer(win,0,SDL_RENDERER_ACCELERATED);
 
     bool gameLoop = true;
-    
-    system("clear");
 
     int itt = 0;
 
+    SDL_Event e;
+
+    float counter = TIMESTAMP * 1000;
+    // float start, end, deltaTime;
+
+    // struct timespec spec;
+
+    SDL_Color whiteColor = {255,255,255,255};
+
+    SDL_Color blackColor = {0,0,0,255};
+
+    int size = round((WIN_H-100)/(MAX_NODE));
+
+    SDL_Rect rect = {50,50,WIN_W-100,WIN_H-100};
+    SDL_Rect titleRect = {0, 0, 100,26};
+
+    button nextButton;
+    SDL_Rect nextButtonRect = {(WIN_W / 2) - 150, WIN_H - 50, 100,50};
+    nextButton.rect = nextButtonRect;
+    nextButton.title = "Run";
+
+    button pauseButton;
+    SDL_Rect pauseButtonRect = {(WIN_W / 2) + 50, WIN_H - 50, 100,50};
+    pauseButton.rect = pauseButtonRect;
+    pauseButton.title = "Pause";
+
+    char title[1024];
+
+    bool edit = true;
+    bool pause = false;
+    bool pressed = false;
+    bool moved = false;
+
+    int mouseX, mouseY;
+
     while (gameLoop)
     {
+        //RENDER
 
-        system("clear");
-        printf("--------------------------- Turn %d ---------------------------\n", itt);
-        for (size_t x = 0; x < MAX_NODE; x++)
+        SDL_SetRenderDrawColor(renderer, BG_COLOR);
+        SDL_RenderClear(renderer);
+
+        sprintf(title, "Connay's game of life (gen %d)",itt);
+        DrawText(renderer, title, 24, 0,0, &blackColor);
+        DrawButton(renderer, &nextButton);
+        DrawButton(renderer, &pauseButton);
+
+        DrawRect(renderer, &rect, &whiteColor, true);
+        DrawGrid(renderer, &rect,size);
+
+        for (size_t y = 0; y < gB->h; y++)
         {
-            for (size_t y = 0; y < MAX_NODE; y++)
+            for (size_t x = 0; x < gB->w; x++)
             {
-                if(gB[x][y]){
-                    if(screenVoisin){
-                        printf(KRED " %d " KWHT,nbrVoisin(x,y));
-
-                    }else{
-                        printf("#");
-                    }
-                }else{
-                    if(screenVoisin){
-                        printf(" %d ",nbrVoisin(x,y));
-                    }else{
-                        printf(".");
-
-                    }
-
+                if(gB->board[y][x]){
+                    SDL_Rect cellrect = {rect.x + x * size,rect.y + y * size, size,size};
+                    DrawRect(renderer,&cellrect, &blackColor,true);
                 }
+                    
             }
-            printf("\n");
             
         }
-        printf("------------------------------------------------------------------------\n");
+        
+        
+        SDL_RenderPresent(renderer);
 
-        for (size_t x = 0; x < MAX_NODE; x++)
-        {
-            for (size_t y = 0; y < MAX_NODE; y++)
+        counter++;
+
+        if((counter / 1.0e3) > TIMESTAMP && !pause && !edit){
+            computeRule(gB);
+
+            itt++;
+            counter = 0;
+
+        }
+        if(pressed && moved){
+
+            if(edit && isInside(mouseX,mouseY, &rect)){
+
+                int x=0,y=0;
+                x = (mouseX - rect.x) / size;
+                y = (mouseY - rect.y) / size;
+
+                gB->board[y][x] = !gB->board[y][x];
+                moved = false;
+            }
+        }
+
+        // sleep(TIMESTAMP);//Handle event
+        while(SDL_PollEvent(&e)){
+            SDL_GetMouseState(&mouseX, &mouseY);
+            switch (e.type)
             {
-                int nbV = nbrVoisin(x,y);
-
-                if(gB[x][y] == true){
-                    if(nbV < 2 || nbV > 3){
-                        gBtmp[x][y] = false;
+                case SDL_QUIT:
+                    gameLoop = false;
+                    break;
+                case SDL_KEYDOWN:
+                    if(e.key.keysym.sym == SDLK_ESCAPE || e.key.keysym.sym == SDLK_q)
+                        gameLoop = false;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    if(isInside(mouseX,mouseY, &nextButton.rect)){
+                        // printf("Next Button Pressed\n");
+                        edit = !edit;
                     }
-
-                }else{
-                    if(nbV == 3){
-                        gBtmp[x][y] = true;
+                    if(isInside(mouseX,mouseY, &pauseButton.rect)){
+                        // printf("Pause Button Pressed\n");
+                        pause = !pause;
                     }
-                }
+                    pressed = true;
+                    break;
+                
+                case SDL_MOUSEBUTTONUP:
+                    pressed = false;                   
+                    break;
+                case SDL_MOUSEMOTION:
+                    moved = true;
+                    break;
+                default:
+                    break;
             }
-            
         }
-
-        itt++;
-
-        for (size_t x = 0; x < MAX_NODE; x++)
-        {
-            for (size_t y = 0; y < MAX_NODE; y++)
-            {
-                gB[y][x] = gBtmp[y][x];
-            }
-            
-        }
-
-        sleep(TIMESTAMP);
-
     }
+
+    freeGameboard(gB);
+    KillSDLContext(win);
 
     return 0;
 }
