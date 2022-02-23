@@ -3,12 +3,11 @@
 #pragma once
 
 #include <stdbool.h>
-#include <unistd.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#define TIMESTAMP 0.2f
+#define TIMESTAMP 0.1f
 #define MAX_NODE 36
 
 #define PROBA 0.5

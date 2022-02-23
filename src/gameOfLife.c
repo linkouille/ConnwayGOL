@@ -75,7 +75,9 @@ gameBoard * initGoLRand(int w, int h, float p)
 
 void computeRule(gameBoard * gB) 
 {
-    int voisins[gB->h][gB->w];
+    int** voisins = (int **) malloc(sizeof(int*) * gB->h);
+    for (size_t i = 0; i < gB->h; i++)
+        voisins[i] = (int*)malloc(sizeof(int) * gB->w);
 
     for (size_t x = 0; x < gB->w; x++)
     {
@@ -101,6 +103,11 @@ void computeRule(gameBoard * gB)
             }
         }
     }
+
+    for (size_t i = 0; i < gB->h; i++)
+        free(voisins[i]);
+    free(voisins);
+
 
 }
 

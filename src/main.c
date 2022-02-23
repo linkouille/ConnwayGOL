@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include <time.h>
 #include <math.h>
 
@@ -12,9 +11,8 @@
 #include "gameOfLife.h"
 #include "SDL_Handler.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
-    
     gameBoard * gB = initGoLEmpty(MAX_NODE, MAX_NODE);
 
     SDL_Window * win = initSDL();
@@ -66,8 +64,8 @@ int main(int argc, char const *argv[])
         SDL_SetRenderDrawColor(renderer, BG_COLOR);
         SDL_RenderClear(renderer);
 
-        sprintf(title, "Connay's game of life (gen %d)",itt);
-        DrawText(renderer, title, 24, 0,0, &blackColor);
+        //sprintf(title, "Connay's game of life (gen %d)",itt);
+        DrawText(renderer, "Connay's game of life", 24, 0,0, &blackColor);
         DrawButton(renderer, &nextButton);
         DrawButton(renderer, &pauseButton);
 

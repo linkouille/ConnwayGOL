@@ -1,3 +1,0 @@
-/home/linkouille/Bureau/Dev/C++/ConwayGOL/bin/CMakeFiles/rebuild_cache.dir
-/home/linkouille/Bureau/Dev/C++/ConwayGOL/bin/CMakeFiles/edit_cache.dir
-/home/linkouille/Bureau/Dev/C++/ConwayGOL/bin/CMakeFiles/main.dir

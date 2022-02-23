@@ -1,1 +1,0 @@
-/usr/bin/cc -Wall -O3 -I. -O2 -g -DNDEBUG  -rdynamic CMakeFiles/main.dir/src/gameOfLife.c.o CMakeFiles/main.dir/src/main.c.o  -o main 

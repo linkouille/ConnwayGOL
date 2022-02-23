@@ -2,12 +2,13 @@
 #define __SDL_HANDLER_H__
 #pragma once
 
+#include <stdio.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
 #include <errno.h>
 #include <stdbool.h>
-#include <unistd.h>
 
 #include "variables.h"
 

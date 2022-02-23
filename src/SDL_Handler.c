@@ -60,8 +60,7 @@ void DrawGrid(SDL_Renderer * renderer,SDL_Rect * rect, float width)
 
 void DrawText(SDL_Renderer * renderer, const char * text, int fontSize, int x, int y, SDL_Color * color) 
 {
-
-    TTF_Font* font = TTF_OpenFont("../assets/font/Arial.ttf", fontSize);
+    TTF_Font* font = TTF_OpenFont("assets/font/Arial.ttf", fontSize);
     int textLen = sizeof(text)/sizeof(char);
     SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, text, *color);
     SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -77,8 +76,7 @@ void DrawText(SDL_Renderer * renderer, const char * text, int fontSize, int x, i
 }
 void DrawTextR(SDL_Renderer * renderer, const char * text, int fontSize, SDL_Color * color, SDL_Rect * rect) 
 {
-
-    TTF_Font* font = TTF_OpenFont("../assets/font/Arial.ttf", fontSize);
+    TTF_Font* font = TTF_OpenFont("assets/font/Arial.ttf", fontSize);
     SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, text, *color);
     SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
 
@@ -92,6 +90,9 @@ void DrawTextR(SDL_Renderer * renderer, const char * text, int fontSize, SDL_Col
 
 void DrawButton(SDL_Renderer * renderer, button * b) 
 {
+    if (b == NULL)
+        return;
+
     SDL_Color lineColor = {50,50,50,255};
     SDL_Color bgColor = {100,100,100,255};
     SDL_Color fontColor = {0,0,0,255};
